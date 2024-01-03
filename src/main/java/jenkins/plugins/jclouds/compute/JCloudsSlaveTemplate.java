@@ -18,7 +18,7 @@ package jenkins.plugins.jclouds.compute;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
@@ -37,18 +37,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.apache.commons.codec.binary.Base64;
-
 import hudson.Extension;
 import hudson.RelativePath;
 import hudson.Util;
+import hudson.XmlFile;
+import hudson.model.AbstractDescribableImpl;
 import hudson.model.AutoCompletionCandidates;
-import hudson.model.Describable;
 import hudson.model.Computer;
 import hudson.model.Descriptor;
 import hudson.model.Label;
@@ -128,7 +126,7 @@ import edazdarevic.commons.net.CIDRUtils;
 /**
  * @author Vijay Kiran
  */
-public class JCloudsSlaveTemplate implements Describable<JCloudsSlaveTemplate>, Supplier<JCloudsNodeMetadata> {
+public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTemplate> implements Supplier<JCloudsNodeMetadata> {
 
     private static final Logger LOGGER = Logger.getLogger(JCloudsSlaveTemplate.class.getName());
     private static final char SEPARATOR_CHAR = ',';
@@ -698,10 +696,20 @@ public class JCloudsSlaveTemplate implements Describable<JCloudsSlaveTemplate>, 
         return null != overrideRetentionTime;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Descriptor<JCloudsSlaveTemplate> getDescriptor() {
-        return Jenkins.get().getDescriptor(getClass());
+    public synchronized String asXml() {
+        String path = "";
+        String ret = "";
+        XmlFile xml = null;
+        try {
+            xml = new XmlFile(File.createTempFile("jclouds-template-", ".xml"));
+            path = xml.toString();
+            xml.write(this);
+            ret = xml.asString();
+            xml.delete();
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to write to " + path, e);
+        }
+        return ret;
     }
 
     @Extension

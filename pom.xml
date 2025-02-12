@@ -55,7 +55,7 @@ limitations under the License.
     <test.jenkins.blobstore.identity>FIXME_IDENTITY</test.jenkins.blobstore.identity>
     <test.jenkins.blobstore.credential>FIXME_CREDENTIALS</test.jenkins.blobstore.credential>
 
-    <jclouds.version>2.5.0</jclouds.version>
+    <jclouds.version>2.7.0-SNAPSHOT</jclouds.version>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.1</jenkins.version>

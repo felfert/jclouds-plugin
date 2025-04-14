@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import jakarta.servlet.ServletException;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import java.util.logging.Logger;
 import com.google.inject.Module;
 import hudson.Extension;
 import hudson.Util;
+import hudson.XmlFile;
 import hudson.init.Initializer;
 import hudson.init.InitMilestone;
 import hudson.model.Computer;
@@ -592,6 +594,22 @@ public class JCloudsCloud extends Cloud {
 
     public boolean allowGzippedUserData() {
         return !Strings.isNullOrEmpty(providerName) && CONFIRMED_GZIP_SUPPORTERS.contains(providerName);
+    }
+
+    public synchronized String asXml() {
+        String path = "";
+        String ret = "";
+        XmlFile xml = null;
+        try {
+            xml = new XmlFile(File.createTempFile("jclouds-cloud-", ".xml"));
+            path = xml.toString();
+            xml.write(this);
+            ret = xml.asString();
+            xml.delete();
+        } catch (IOException e) {
+            LOGGER.warning(String.format("Failed to write to %s: %s", path, e.getMessage()));
+        }
+        return ret;
     }
 
     @Extension

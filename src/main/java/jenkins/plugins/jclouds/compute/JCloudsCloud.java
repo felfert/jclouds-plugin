@@ -596,7 +596,12 @@ public class JCloudsCloud extends Cloud {
         return !Strings.isNullOrEmpty(providerName) && CONFIRMED_GZIP_SUPPORTERS.contains(providerName);
     }
 
-    public synchronized String asXml() {
+        /**
+         * Export cloud as XML.
+         * @param full If true, include all templates of this cloud.
+         * @return The XML representation of this cloud.
+         */
+    public synchronized String asXml(boolean full) {
         String path = "";
         String ret = "";
         XmlFile xml = null;
@@ -609,7 +614,7 @@ public class JCloudsCloud extends Cloud {
         } catch (IOException e) {
             LOGGER.warning(String.format("Failed to write to %s: %s", path, e.getMessage()));
         }
-        return ret;
+        return full ? ret : ret.replaceAll("(?s)<templates>.*</templates>", "<templates/>");
     }
 
     @Extension

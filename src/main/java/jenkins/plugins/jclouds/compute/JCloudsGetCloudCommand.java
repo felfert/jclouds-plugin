@@ -23,6 +23,7 @@ import jenkins.model.Jenkins;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.Option;
 
 /**
  * Exports an existing jclouds cloud to xml on stdout
@@ -35,6 +36,9 @@ public class JCloudsGetCloudCommand extends CLICommand {
     @Argument(required = true, metaVar = "PROFILE", usage = "Name of jclouds profile to use")
         public String profile = null;
 
+    @Option(required = false, name = "-f", aliases = "--full", usage = "Include all templates of this cloud")
+    private boolean full;
+
     @Override
     public String getShortDescription() {
         return Messages.GetCloudCommand_shortDescription();
@@ -44,7 +48,7 @@ public class JCloudsGetCloudCommand extends CLICommand {
     protected int run() throws IOException, CmdLineException {
         Jenkins.get().checkPermission(Jenkins.READ);
         final JCloudsCloud c = CliHelper.resolveCloud(profile);
-        stdout.println(c.asXml());
+        stdout.println(c.asXml(full));
         return 0;
     }
 

@@ -20,7 +20,6 @@ import com.google.common.base.Predicate;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import jakarta.servlet.ServletException;
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ import java.util.logging.Logger;
 import com.google.inject.Module;
 import hudson.Extension;
 import hudson.Util;
-import hudson.XmlFile;
 import hudson.init.Initializer;
 import hudson.init.InitMilestone;
 import hudson.model.Computer;
@@ -594,27 +592,6 @@ public class JCloudsCloud extends Cloud {
 
     public boolean allowGzippedUserData() {
         return !Strings.isNullOrEmpty(providerName) && CONFIRMED_GZIP_SUPPORTERS.contains(providerName);
-    }
-
-        /**
-         * Export cloud as XML.
-         * @param full If true, include all templates of this cloud.
-         * @return The XML representation of this cloud.
-         */
-    public synchronized String asXml(boolean full) {
-        String path = "";
-        String ret = "";
-        XmlFile xml = null;
-        try {
-            xml = new XmlFile(File.createTempFile("jclouds-cloud-", ".xml"));
-            path = xml.toString();
-            xml.write(this);
-            ret = xml.asString();
-            xml.delete();
-        } catch (IOException e) {
-            LOGGER.warning(String.format("Failed to write to %s: %s", path, e.getMessage()));
-        }
-        return full ? ret : ret.replaceAll("(?s)<templates>.*</templates>", "<templates/>");
     }
 
     @Extension

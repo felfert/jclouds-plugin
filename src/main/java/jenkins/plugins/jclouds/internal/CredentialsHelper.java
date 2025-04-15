@@ -33,6 +33,10 @@ import hudson.util.Secret;
 import jenkins.model.Jenkins;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -146,6 +150,66 @@ public final class CredentialsHelper {
         throw new RuntimeException("Could not retrieve credentials");
     }
 
+    /**
+     * Calculates a SHA-256 hash of the credential with the specified Id.
+     *
+     * This hash will be used for comparing credentials.
+     *
+     * @param id The Id of the credentials object.
+     * @return String containig a hex representation of the calculated hash.
+     *
+     * <p>The following credential types are supported:</p>
+     *
+     *  <ul>
+     *    <li><b>SSHUserPrivateKey</b>: The hash will be calculated from
+     *    <ul>
+     *      <li>The passphrase
+     *      <li>The username
+     *      <li>The private key content
+     *    </ul>
+     *    <li><b>StandardUsernamePasswordCredentials</b>: The hash will be calculated from
+     *    <ul>
+     *      <li>The username
+     *      <li>The password
+     *    </ul>
+     *    <li><b>OpenstackKeystoneV3</b>: The hash will be calculated from
+     *    <ul>
+     *      <li>The domain
+     *      <li>The project
+     *      <li>The username
+     *      <li>The password
+     *    </ul>
+     *  </ul>
+     *
+     */
+
+    public static String getCredentialsHash(final String id) throws NoSuchAlgorithmException {
+        StandardUsernameCredentials u = getCredentialsById(id);
+        if (null != u) {
+            HexFormat hex = HexFormat.of();
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            if (u instanceof OpenstackKeystoneV3) {
+                OpenstackKeystoneV3 ok3 = (OpenstackKeystoneV3)u;
+                md.update(ok3.getDomain().getBytes(StandardCharsets.UTF_8));
+                md.update(ok3.getProject().getBytes(StandardCharsets.UTF_8));
+                md.update(ok3.getUsername().getBytes(StandardCharsets.UTF_8));
+                return hex.formatHex(md.digest(getPasswordOrEmpty(ok3.getPassword()).getBytes(StandardCharsets.UTF_8)));
+            } else if (u instanceof StandardUsernamePasswordCredentials) {
+                StandardUsernamePasswordCredentials up = (StandardUsernamePasswordCredentials)u;
+                md.update(up.getUsername().getBytes(StandardCharsets.UTF_8));
+                return hex.formatHex(md.digest(getPasswordOrEmpty(up.getPassword()).getBytes(StandardCharsets.UTF_8)));
+            } else if (u instanceof SSHUserPrivateKey) {
+                SSHUserPrivateKey up = (SSHUserPrivateKey)u;
+                md.update(getPasswordOrEmpty(up.getPassphrase()).getBytes(StandardCharsets.UTF_8));
+                md.update(up.getUsername().getBytes(StandardCharsets.UTF_8));
+                return hex.formatHex(md.digest(String.join("", up.getPrivateKeys()).getBytes(StandardCharsets.UTF_8)));
+            }
+            throw new RuntimeException("invalid credentials type");
+        }
+        throw new RuntimeException("Could not retrieve credentials");
+    }
+
     public static String getPrivateKey(final SSHUserPrivateKey supk) {
         if (null == supk) {
             return "";
@@ -158,6 +222,10 @@ public final class CredentialsHelper {
         // We explicitely DO want a possible null, because in jclouds
         // this means: No password set (vs. an empty password).
         return null == s ? null : s.getPlainText();
+    }
+
+    private static String getPasswordOrEmpty(final Secret s) {
+        return null == s ? "" : s.getPlainText();
     }
 }
 

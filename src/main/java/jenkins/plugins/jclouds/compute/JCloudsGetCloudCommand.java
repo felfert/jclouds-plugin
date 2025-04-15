@@ -16,6 +16,7 @@
 package jenkins.plugins.jclouds.compute;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import hudson.Extension;
 import hudson.cli.CLICommand;
@@ -25,6 +26,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
 
+import jenkins.plugins.jclouds.internal.CredentialsHelper;
 /**
  * Exports an existing jclouds cloud to xml on stdout
  *
@@ -48,7 +50,16 @@ public class JCloudsGetCloudCommand extends CLICommand {
     protected int run() throws IOException, CmdLineException {
         Jenkins.get().checkPermission(Jenkins.READ);
         final JCloudsCloud c = CliHelper.resolveCloud(profile);
-        stdout.println(c.asXml(full));
+        String xml = Jenkins.XSTREAM.toXML(c);
+        try {
+            String hash = CredentialsHelper.getCredentialsHash(c.getCloudGlobalKeyId());
+            xml = xml.replaceAll("<cloudGlobalKeyId>", String.format("<cloudGlobalKeyId sha256=\"%s\">", hash));
+            hash = CredentialsHelper.getCredentialsHash(c.getCloudCredentialsId());
+            xml = xml.replaceAll("<cloudCredentialsId>", String.format("<cloudCredentialsId sha256=\"%s\">", hash));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Could not calculate hashes for credentials");
+        }
+        stdout.println(full ? xml : xml.replaceAll("(?s)<templates>.*</templates>", "<templates/>"));
         return 0;
     }
 

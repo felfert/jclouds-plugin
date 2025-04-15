@@ -167,7 +167,7 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
     public final boolean installPrivateKey;
     public final Integer overrideRetentionTime;
     public final int spoolDelayMs;
-    private final Object delayLockObject = new Object();
+    private transient Object delayLockObject = new Object();
     /** @deprecated Not used anymore, but retained for backward compatibility during deserialization. */
     @Deprecated
     private transient Boolean assignFloatingIp;

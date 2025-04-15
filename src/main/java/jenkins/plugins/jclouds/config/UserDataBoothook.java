@@ -71,6 +71,7 @@ public class UserDataBoothook extends Config {
         /**
          * used for data migration only (config-file-provider prior 1.15)
          */
+        @SuppressWarnings("deprecation")
         @Override
         public UserDataBoothook convert(Config config) {
             return new UserDataBoothook(config.id, config.name, config.comment, config.content);

@@ -70,6 +70,7 @@ public class UserDataScript extends Config {
         /**
          * used for data migration only (config-file-provider prior 1.15)
          */
+        @SuppressWarnings("deprecation")
         @Override
         public UserDataScript convert(Config config) {
             return new UserDataScript(config.id, config.name, config.comment, config.content);

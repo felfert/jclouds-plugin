@@ -75,6 +75,7 @@ public class UserDataIncludeOnce extends Config {
         /**
          * used for data migration only (config-file-provider prior 1.15)
          */
+        @SuppressWarnings("deprecation")
         @Override
         public UserDataIncludeOnce convert(Config config) {
             return new UserDataIncludeOnce(config.id, config.name, config.comment, config.content);

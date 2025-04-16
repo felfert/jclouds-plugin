@@ -51,6 +51,23 @@ public class JCloudsCreateCloudCommand extends CLICommand {
     @Argument(metaVar = "NAME", usage = "Name of the new profile to create", required = true)
     public String name;
 
+    @Override
+    protected int run() throws Exception {
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
+        if (null != Jenkins.get().clouds.getByName(name)) {
+            throw new IllegalStateException("Cloud '" + name + "' already exists");
+        }
+
+        String xml = new String(stdin.readAllBytes(), StandardCharsets.UTF_8);
+        // Not great, but cloud name is final
+        xml = xml.replaceFirst("<name>.*</name>", "<name>" + name + "</name>");
+        JCloudsCloud c = (JCloudsCloud) Jenkins.XSTREAM.fromXML(xml);
+        validateCloudCredentials(c, xml);
+        Jenkins.get().clouds.add(c);
+        return 0;
+    }
+
     private String getHashAttribute(String xml, String tag) {
         Pattern p = Pattern.compile(String.format("(?s).*?<%s sha256=\"([0-9a-fA-F]+)\">.*", tag));
         Matcher m = p.matcher(xml);
@@ -83,22 +100,5 @@ public class JCloudsCreateCloudCommand extends CLICommand {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Could not calculate hashes for credentials");
         }
-    }
-
-    @Override
-    protected int run() throws Exception {
-        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-
-        if (null != Jenkins.get().clouds.getByName(name)) {
-            throw new IllegalStateException("Cloud '" + name + "' already exists");
-        }
-
-        String xml = new String(stdin.readAllBytes(), StandardCharsets.UTF_8);
-        // Not great, but cloud name is final
-        xml = xml.replaceFirst("<name>.*</name>", "<name>" + name + "</name>");
-        JCloudsCloud c = (JCloudsCloud) Jenkins.XSTREAM.fromXML(xml);
-        validateCloudCredentials(c, xml);
-        Jenkins.get().clouds.add(c);
-        return 0;
     }
 }

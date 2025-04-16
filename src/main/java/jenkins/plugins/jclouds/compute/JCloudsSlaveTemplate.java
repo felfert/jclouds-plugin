@@ -18,7 +18,6 @@ package jenkins.plugins.jclouds.compute;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
@@ -44,7 +43,6 @@ import org.apache.commons.codec.binary.Base64;
 import hudson.Extension;
 import hudson.RelativePath;
 import hudson.Util;
-import hudson.XmlFile;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.AutoCompletionCandidates;
 import hudson.model.Computer;
@@ -378,7 +376,7 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
         }
     }
 
-    private List<String> getUserDataIds() {
+    protected  List<String> getUserDataIds() {
         List<String> ret = new ArrayList<>();
         for (UserData ud : userDataEntries) {
             ret.add(ud.fileId);
@@ -697,22 +695,6 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
 
     public boolean hasOverrideRetentionTime() {
         return null != overrideRetentionTime;
-    }
-
-    public synchronized String asXml() {
-        String path = "";
-        String ret = "";
-        XmlFile xml = null;
-        try {
-            xml = new XmlFile(File.createTempFile("jclouds-template-", ".xml"));
-            path = xml.toString();
-            xml.write(this);
-            ret = xml.asString();
-            xml.delete();
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Failed to write to " + path, e);
-        }
-        return ret;
     }
 
     @Extension

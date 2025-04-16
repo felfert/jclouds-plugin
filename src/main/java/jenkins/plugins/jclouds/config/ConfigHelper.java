@@ -27,9 +27,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import java.nio.charset.StandardCharsets;
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -211,4 +214,17 @@ public class ConfigHelper {
         return m;
     }
 
+    public static Map<String, String> getUserDataHashes(List<String> configIds) throws NoSuchAlgorithmException {
+        HexFormat hex = HexFormat.of();
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        Map<String, String> ret = new HashMap<>();
+        for (Config cfg : getConfigs(configIds)) {
+            DataSource ds = new ConfigDataSource(cfg, false, Map.of());
+            String content = null == cfg.content ? "" : cfg.content;
+            md.update(ds.getContentType().getBytes(StandardCharsets.UTF_8));
+            String hash = hex.formatHex(md.digest(content.getBytes(StandardCharsets.UTF_8)));
+            ret.put(cfg.id, hash);
+        }
+        return ret;
+    }
 }

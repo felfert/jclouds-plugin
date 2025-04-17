@@ -601,7 +601,7 @@ public class JCloudsCloud extends Cloud {
 
         /**
          * Human readable name of this kind of configurable object.
-         * @return The human readable name of this object. 
+         * @return The human readable name of this object.
          */
         @NonNull
         @Override
@@ -833,7 +833,7 @@ public class JCloudsCloud extends Cloud {
                 return CredentialsHelper.storeCredentials(u);
             } catch (IOException e) {
                 LOGGER.warning(String.format("Error while migrating privateKey: %s", e.getMessage()));
-            } 
+            }
             return null;
         }
     }

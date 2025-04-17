@@ -29,7 +29,7 @@ class CliHelper {
 
     static public JCloudsCloud resolveCloud(String name) throws CmdLineException {
         if (null != name) {
-            
+
             final Jenkins.CloudList cl = Jenkins.get().clouds;
             final Cloud c = cl.getByName(name);
             if (null != c && c instanceof JCloudsCloud) {

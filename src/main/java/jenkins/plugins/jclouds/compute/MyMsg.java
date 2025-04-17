@@ -44,7 +44,7 @@ public enum  MyMsg implements Localizable {
         ResourceBundle localized = ResourceBundle.getBundle(Messages.class.getName(), locale);
         return MessageFormat.format(localized.getString(name()),args);
     }
-    
+
 
     public String format( Object... args ) {
         return formatWithLocale(Locale.getDefault(),args);

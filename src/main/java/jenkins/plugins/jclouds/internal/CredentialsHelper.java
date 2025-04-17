@@ -98,7 +98,7 @@ public final class CredentialsHelper {
             return storeCredentials(u);
         } catch (IOException|FormException e) {
             LOGGER.warning(String.format("Error while migrating identity/credentials: %s", e.getMessage()));
-        } 
+        }
         return null;
     }
 

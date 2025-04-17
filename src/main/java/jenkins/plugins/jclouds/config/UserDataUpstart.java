@@ -71,7 +71,6 @@ public class UserDataUpstart extends Config {
         /**
          * used for data migration only (config-file-provider prior 1.15)
          */
-        @SuppressWarnings("deprecation")
         @Override
         public UserDataUpstart convert(Config config) {
             return new UserDataUpstart(config.id, config.name, config.comment, config.content);

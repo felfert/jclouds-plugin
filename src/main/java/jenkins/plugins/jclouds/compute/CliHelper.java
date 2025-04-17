@@ -44,7 +44,7 @@ class CliHelper {
                     }
                 }
             }
-            throw new CmdLineException(null, MyMsg.NO_SUCH_PROFILE_EXISTS,
+            throw new CmdLineException(null, CliMessages.NO_SUCH_PROFILE_EXISTS,
                 name, EditDistance.findNearest(name, names));
         }
         return null;
@@ -80,7 +80,7 @@ class CliHelper {
                     JCloudsSlaveTemplate t = jc.getTemplate(name);
                     if (null != t) {
                         if (null != ret) {
-                            throw new CmdLineException(null, MyMsg.AMBIGUOUS_TEMPLATE, name);
+                            throw new CmdLineException(null, CliMessages.AMBIGUOUS_TEMPLATE, name);
                         }
                         ret = t;
                     }
@@ -91,7 +91,7 @@ class CliHelper {
         }
         if (null == ret) {
             List<String> names = getAllTemplateNames(cloud);
-            throw new CmdLineException(null, MyMsg.NO_SUCH_TEMPLATE_EXISTS, name, EditDistance.findNearest(name, names));
+            throw new CmdLineException(null, CliMessages.NO_SUCH_TEMPLATE_EXISTS, name, EditDistance.findNearest(name, names));
         }
         return ret;
     }

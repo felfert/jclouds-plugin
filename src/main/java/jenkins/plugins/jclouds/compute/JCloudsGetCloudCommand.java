@@ -17,6 +17,7 @@ package jenkins.plugins.jclouds.compute;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
 
 import hudson.Extension;
 import hudson.cli.CLICommand;
@@ -59,7 +60,18 @@ public class JCloudsGetCloudCommand extends CLICommand {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Could not calculate hashes for credentials");
         }
-        stdout.println(full ? xml : xml.replaceAll("(?s)<templates>.*</templates>", "<templates/>"));
+        if (full) {
+            StringBuffer sb = new StringBuffer();
+            for (JCloudsSlaveTemplate tpl : c.getTemplates()) {
+                sb.append(JCloudsGetTemplateCommand.getXmlWithHashes(tpl)).append("\n");
+            }
+            sb = new StringBuffer(sb.toString().replace("\n", "\n    "));
+            sb.insert(0, "<templates>\n    ").replace(sb.length() - 2, sb.length(), "</templates>");
+            xml = xml.replaceFirst("(?s)<templates>.*</templates>", Matcher.quoteReplacement(sb.toString()));
+        } else {
+            xml = xml.replaceFirst("(?s)<templates>.*</templates>", "<templates/>");
+        }
+        stdout.println(xml);
         return 0;
     }
 

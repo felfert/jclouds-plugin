@@ -54,6 +54,11 @@ public class JCloudsGetTemplateCommand extends CLICommand {
         Jenkins.get().checkPermission(Jenkins.READ);
         final JCloudsCloud c = CliHelper.resolveCloud(profile);
         final JCloudsSlaveTemplate tpl = CliHelper.resolveTemplate(c, tmpl);
+        stdout.println(getXmlWithHashes(tpl));
+        return 0;
+    }
+
+    static protected String getXmlWithHashes(JCloudsSlaveTemplate tpl) {
         String xml = Jenkins.XSTREAM.toXML(tpl);
         try {
             String hash;
@@ -68,14 +73,14 @@ public class JCloudsGetTemplateCommand extends CLICommand {
             throw new IllegalStateException("Could not calculate hashes for credentials");
         }
         try {
-            stdout.println(getUserDataHashes(tpl, xml));
+            xml = getUserDataHashes(tpl, xml);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Could not calculate hashes for userdata");
         }
-        return 0;
+        return xml;
     }
 
-    private String getUserDataHashes(JCloudsSlaveTemplate tpl, String xml) throws NoSuchAlgorithmException {
+    static private String getUserDataHashes(JCloudsSlaveTemplate tpl, String xml) throws NoSuchAlgorithmException {
         List<String> ids = tpl.getUserDataIds();
         Map<String, String> m = ConfigHelper.getUserDataHashes(ids);
         for (String id : ids) {

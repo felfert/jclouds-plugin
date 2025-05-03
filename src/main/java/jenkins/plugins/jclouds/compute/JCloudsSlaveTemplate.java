@@ -378,8 +378,10 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
 
     protected  List<String> getUserDataIds() {
         List<String> ret = new ArrayList<>();
-        for (UserData ud : userDataEntries) {
-            ret.add(ud.fileId);
+        if (null != userDataEntries) {
+            for (UserData ud : userDataEntries) {
+                ret.add(ud.fileId);
+            }
         }
         return ret;
     }

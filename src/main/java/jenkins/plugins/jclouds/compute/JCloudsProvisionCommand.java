@@ -57,7 +57,7 @@ public class JCloudsProvisionCommand extends CLICommand {
     @Override
     protected int run() throws IOException, CmdLineException {
         Jenkins.get().checkPermission(Jenkins.READ);
-        JCloudsCloud c = CliHelper.resolveCloud(profile);
+        JCloudsCloud c = CliHelper.resolveCloud(profile, true);
         final JCloudsSlaveTemplate tpl = CliHelper.resolveTemplate(c, tmpl);
         if (null == c) {
             c = tpl.getCloud();

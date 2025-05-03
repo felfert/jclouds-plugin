@@ -37,7 +37,7 @@ import jenkins.plugins.jclouds.internal.CredentialsHelper;
 public class JCloudsGetCloudCommand extends CLICommand {
 
     @Argument(required = true, metaVar = "PROFILE", usage = "Name of jclouds profile to use")
-        public String profile = null;
+    public String profile = null;
 
     @Option(required = false, name = "-f", aliases = "--full", usage = "Include all templates of this cloud")
     private boolean full;
@@ -50,7 +50,7 @@ public class JCloudsGetCloudCommand extends CLICommand {
     @Override
     protected int run() throws IOException, CmdLineException {
         Jenkins.get().checkPermission(Jenkins.READ);
-        final JCloudsCloud c = CliHelper.resolveCloud(profile);
+        final JCloudsCloud c = CliHelper.resolveCloud(profile, false);
         String xml = Jenkins.XSTREAM.toXML(c);
         try {
             String hash = CredentialsHelper.getCredentialsHash(c.getCloudGlobalKeyId());

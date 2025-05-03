@@ -1293,7 +1293,7 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
         return Base64.decodeBase64(builder.toString());
     }
 
-    private static boolean isNullOrEmpty(final String value) {
+    static boolean isNullOrEmpty(final String value) {
         return null == Util.fixEmptyAndTrim(value);
     }
 }

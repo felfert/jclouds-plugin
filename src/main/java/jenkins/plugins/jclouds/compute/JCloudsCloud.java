@@ -280,6 +280,11 @@ public class JCloudsCloud extends Cloud {
         return this;
     }
 
+    public void addTemplate(JCloudsSlaveTemplate tpl) {
+        tpl.cloud = this;
+        templates.add(tpl);
+    }
+
     /**
      * Get the retention time in minutes or default value from CloudInstanceDefaults if it is zero.
      * @return The retention time in minutes.

@@ -20,8 +20,6 @@ import java.io.IOException;
 import hudson.Extension;
 import hudson.cli.CLICommand;
 import hudson.security.Permission;
-import hudson.slaves.Cloud;
-import jenkins.model.Jenkins;
 
 /**
  * Provisions a slave.
@@ -42,17 +40,14 @@ public class JCloudsTemplatesCommand extends CLICommand {
     protected int run() throws IOException {
         int maxProfileLen = 0;
         int maxTemplateLen = 0;
-        for (final Cloud cloud : Jenkins.get().clouds) {
-            if (cloud instanceof JCloudsCloud) {
-                final JCloudsCloud c = (JCloudsCloud)cloud;
-                if (c.hasPermission(Permission.READ)) {
-                    if (c.profile.length() > maxProfileLen) {
-                        maxProfileLen = c.profile.length();
-                    }
-                    for (final JCloudsSlaveTemplate t : c.getTemplates()) {
-                        if (t.name.length() > maxTemplateLen) {
-                            maxTemplateLen = t.name.length();
-                        }
+        for (final JCloudsCloud c : CliHelper.getAllJCloudClouds()) {
+            if (c.hasPermission(Permission.READ)) {
+                if (c.profile.length() > maxProfileLen) {
+                    maxProfileLen = c.profile.length();
+                }
+                for (final JCloudsSlaveTemplate t : c.getTemplates()) {
+                    if (t.name.length() > maxTemplateLen) {
+                        maxTemplateLen = t.name.length();
                     }
                 }
             }
@@ -69,12 +64,9 @@ public class JCloudsTemplatesCommand extends CLICommand {
             stdout.printf(fmt, PROFILE, NAME, "Description");
             stdout.println(String.format("%-" + (maxProfileLen + maxTemplateLen + 13) + "s", " ").replaceAll(" ", "="));
             final String indent = String.format("%-" + (maxProfileLen + maxTemplateLen + 3) + "s", "\n");
-            for (final Cloud cloud : Jenkins.get().clouds) {
-                if (cloud instanceof JCloudsCloud) {
-                    final JCloudsCloud c = (JCloudsCloud)cloud;
-                    for (final JCloudsSlaveTemplate t : c.getTemplates()) {
-                        stdout.printf(fmt, c.profile, t.name, t.description.replaceAll("\n", indent));
-                    }
+            for (final JCloudsCloud c : CliHelper.getAllJCloudClouds()) {
+                for (final JCloudsSlaveTemplate t : c.getTemplates()) {
+                    stdout.printf(fmt, c.profile, t.name, t.description.replaceAll("\n", indent));
                 }
             }
         }

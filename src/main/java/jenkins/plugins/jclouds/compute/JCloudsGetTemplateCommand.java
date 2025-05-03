@@ -52,7 +52,7 @@ public class JCloudsGetTemplateCommand extends CLICommand {
     @Override
     protected int run() throws IOException, CmdLineException {
         Jenkins.get().checkPermission(Jenkins.READ);
-        final JCloudsCloud c = CliHelper.resolveCloud(profile);
+        final JCloudsCloud c = CliHelper.resolveCloud(profile, true);
         final JCloudsSlaveTemplate tpl = CliHelper.resolveTemplate(c, tmpl);
         stdout.println(getXmlWithHashes(tpl));
         return 0;
@@ -86,6 +86,12 @@ public class JCloudsGetTemplateCommand extends CLICommand {
         for (String id : ids) {
             String hash = m.get(id);
             xml = xml.replaceFirst(String.format("<fileId>(%s)", id),String.format("<fileId sha256=\"%s\">$1", hash));
+        }
+        String sid = tpl.getInitScriptId();
+        if (null != sid && !sid.isEmpty()) {
+            m = ConfigHelper.getUserDataHashes(List.of(sid));
+            xml = xml.replaceFirst(String.format("<initScriptId>(%s)", sid),
+                String.format("<initScriptId sha256=\"%s\">$1", m.get(sid)));
         }
         return xml;
     }

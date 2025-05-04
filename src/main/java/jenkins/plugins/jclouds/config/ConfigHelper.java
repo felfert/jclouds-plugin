@@ -227,4 +227,17 @@ public class ConfigHelper {
         }
         return ret;
     }
+
+    public static String exportXml() {
+        List<Config> cfgs = new ArrayList<>();
+        for (ConfigProvider p : ConfigProvider.all()) {
+            ConfigSuitableFor a = p.getClass().getAnnotation(ConfigSuitableFor.class);
+            if (null != a && a.target() == UserData.class) {
+                for (Config cfg : ConfigFiles.getConfigsInContext(Jenkins.get(), p.getClass())) {
+                    cfgs.add(cfg);
+                }
+            }
+        }
+        return Jenkins.XSTREAM.toXML(cfgs);
+    }
 }

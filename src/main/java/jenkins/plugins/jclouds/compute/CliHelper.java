@@ -37,6 +37,8 @@ import jenkins.plugins.jclouds.internal.CredentialsHelper;
 
 class CliHelper {
 
+    static public final String XML_HEADER = "<?xml version='1.1' encoding='UTF-8'?>";
+
     static public List<JCloudsCloud> getAllJCloudClouds() {
         List<JCloudsCloud> ret = new ArrayList<>();
         for (Cloud c : Jenkins.get().clouds) {

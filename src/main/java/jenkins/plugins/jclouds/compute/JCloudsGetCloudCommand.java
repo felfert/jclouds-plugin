@@ -71,6 +71,7 @@ public class JCloudsGetCloudCommand extends CLICommand {
         } else {
             xml = xml.replaceFirst("(?s)<templates>.*</templates>", "<templates/>");
         }
+        stdout.println(CliHelper.XML_HEADER);
         stdout.println(xml);
         return 0;
     }

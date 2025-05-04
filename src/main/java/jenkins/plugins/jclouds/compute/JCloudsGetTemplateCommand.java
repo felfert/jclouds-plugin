@@ -54,6 +54,7 @@ public class JCloudsGetTemplateCommand extends CLICommand {
         Jenkins.get().checkPermission(Jenkins.READ);
         final JCloudsCloud c = CliHelper.resolveCloud(profile, true);
         final JCloudsSlaveTemplate tpl = CliHelper.resolveTemplate(c, tmpl);
+        stdout.println(CliHelper.XML_HEADER);
         stdout.println(getXmlWithHashes(tpl));
         return 0;
     }

@@ -18,11 +18,14 @@ package jenkins.plugins.jclouds.internal;
 import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.Domain;
+import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.cloudbees.jenkins.plugins.sshcredentials.SSHUserPrivateKey;
+
+import com.trilead.ssh2.crypto.PEMDecoder;
 
 import hudson.model.Descriptor.FormException;
 import hudson.plugins.sshslaves.SSHLauncher;
@@ -34,6 +37,7 @@ import jenkins.model.Jenkins;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
@@ -226,6 +230,21 @@ public final class CredentialsHelper {
 
     private static String getPasswordOrEmpty(final Secret s) {
         return null == s ? "" : s.getPlainText();
+    }
+
+    public static KeyPair getKeyPairFromCredential(final String id) throws IOException {
+        if (null != id && !id.isEmpty()) {
+            SSHUserPrivateKey supk = CredentialsMatchers.firstOrNull(
+                    CredentialsProvider.lookupCredentialsInItemGroup(SSHUserPrivateKey.class, Jenkins.get(), ACL.SYSTEM2),
+                    CredentialsMatchers.withId(id));
+            if (null == supk) {
+                throw new IOException("Credential " + id + " is not available");
+            }
+            String pem = getPrivateKey(supk);
+            String passPhrase = getPassword(supk.getPassphrase());
+            return PEMDecoder.decodeKeyPair(pem.toCharArray(), passPhrase);
+        }
+        return null;
     }
 }
 

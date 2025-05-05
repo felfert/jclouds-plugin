@@ -15,18 +15,16 @@
  */
 package jenkins.plugins.jclouds.compute;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import hudson.Extension;
 import hudson.cli.CLICommand;
 import jenkins.model.Jenkins;
 
+import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 
-import jenkins.plugins.jclouds.config.ConfigHelper;
+import jenkins.plugins.jclouds.config.ConfigExport;
 
 /**
  * Exports an all jclouds UserData to xml on stdout
@@ -35,6 +33,9 @@ import jenkins.plugins.jclouds.config.ConfigHelper;
  */
 @Extension
 public class JCloudsGetUserdataCommand extends CLICommand {
+
+    @Argument(required = false, metaVar = "CREDENTIAL", usage = "ID of credential (RSA key) to encrypt data")
+    public String cred = null;
 
     @Override
     public String getShortDescription() {
@@ -45,7 +46,7 @@ public class JCloudsGetUserdataCommand extends CLICommand {
     protected int run() throws IOException, CmdLineException {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         stdout.println(CliHelper.XML_HEADER);
-        stdout.println(ConfigHelper.exportXml());
+        stdout.println(new ConfigExport(cred).exportXml());
         return 0;
     }
 }

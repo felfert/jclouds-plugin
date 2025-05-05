@@ -22,6 +22,7 @@ import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAKey;
 
 import java.util.Arrays;
 import java.util.Base64;
@@ -41,14 +42,21 @@ public class CryptoHelper {
     private static final byte[] LF = new byte[] { (byte)0x0a };
     private final Cipher cipher;
     private final KeyPair keypair;
+    private final int decryptBlockLen;
 
     public CryptoHelper(@CheckForNull String id) {
+        if (null == id) {
+            throw new IllegalStateException("Could not get NULL credential");
+        }
         try {
             keypair = CredentialsHelper.getKeyPairFromCredential(id);
         } catch (IOException e) {
-            throw new IllegalStateException("Could not get key pair from credential: " + e.toString());
+            throw new IllegalStateException("Could not get keypair from credential: " + e.toString());
         }
         if (keypair.getPrivate() instanceof RSAPrivateKey) {
+            RSAKey k = (RSAKey)keypair.getPublic();
+            int bitLen = k.getModulus().bitLength();
+            decryptBlockLen = bitLen / 8 + (((bitLen % 8) != 0) ? 1 : 0);
             try {
                 cipher = Cipher.getInstance("RSA");
             } catch (NoSuchAlgorithmException|NoSuchPaddingException e) {
@@ -71,17 +79,17 @@ public class CryptoHelper {
 
     public String decrypt(String base64) {
         try {
-            cipher.init(Cipher.DECRYPT_MODE, keypair.getPublic());
+            cipher.init(Cipher.DECRYPT_MODE, keypair.getPrivate());
             byte[] crypted = Base64.getMimeDecoder().decode(base64);
             return new String(blockCipher(crypted, Cipher.DECRYPT_MODE), StandardCharsets.UTF_8);
         } catch (InvalidKeyException|IllegalBlockSizeException|BadPaddingException e) {
-              throw new IllegalStateException("Could not encrypt: " + e.toString());
+              throw new IllegalStateException("Could not decrypt: " + e.toString());
         }
     }
 
     private byte[] blockCipher(byte[] bytes, int mode) throws IllegalBlockSizeException, BadPaddingException {
         byte[] result = new byte[0];
-        final int blocklen = (mode == Cipher.ENCRYPT_MODE)? 100 : 128;
+        final int blocklen = (mode == Cipher.ENCRYPT_MODE) ? 100 : decryptBlockLen;
         byte[] buffer = new byte[blocklen];
 
         for (int i = 0; i < bytes.length; i++) {

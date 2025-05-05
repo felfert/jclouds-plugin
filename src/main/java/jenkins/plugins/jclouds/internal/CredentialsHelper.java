@@ -235,7 +235,7 @@ public final class CredentialsHelper {
     public static KeyPair getKeyPairFromCredential(final String id) throws IOException {
         if (null != id && !id.isEmpty()) {
             SSHUserPrivateKey supk = CredentialsMatchers.firstOrNull(
-                    CredentialsProvider.lookupCredentialsInItemGroup(SSHUserPrivateKey.class, Jenkins.get(), ACL.SYSTEM2),
+                    CredentialsProvider.lookupCredentialsInItemGroup(SSHUserPrivateKey.class, null, null),
                     CredentialsMatchers.withId(id));
             if (null == supk) {
                 throw new IOException("Credential " + id + " is not available");

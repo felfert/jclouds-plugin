@@ -304,7 +304,7 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
             return getCloud().getGlobalPrivateKey();
         }
         SSHUserPrivateKey supk = CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentialsInItemGroup(SSHUserPrivateKey.class, Jenkins.get(), ACL.SYSTEM2),
+                CredentialsProvider.lookupCredentialsInItemGroup(SSHUserPrivateKey.class, null, null),
                 CredentialsMatchers.withId(credentialsId));
         if (null == supk) {
             LOGGER.warning(String.format("Credentials with id %s not found", credentialsId));
@@ -1228,7 +1228,7 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
 
     private StandardUsernameCredentials retrieveExistingCredentials(final String username, final String privkey) {
         return CredentialsMatchers.firstOrNull(CredentialsProvider.lookupCredentialsInItemGroup(SSHUserPrivateKey.class,
-                    Jenkins.get(), ACL.SYSTEM2, Collections.<DomainRequirement>singletonList(SSHLauncher.SSH_SCHEME)),
+                    null, null, Collections.<DomainRequirement>singletonList(SSHLauncher.SSH_SCHEME)),
                     CredentialsMatchers.allOf(CredentialsMatchers.withUsername(username), new CredentialsMatcher() {
                         public boolean matches(Credentials item) {
                             for (String key : SSHUserPrivateKey.class.cast(item).getPrivateKeys()) {

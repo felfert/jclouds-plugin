@@ -51,7 +51,7 @@ public class JCloudsGetTemplateCommand extends CLICommand {
 
     @Override
     protected int run() throws IOException, CmdLineException {
-        Jenkins.get().checkPermission(Jenkins.READ);
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         final JCloudsCloud c = CliHelper.resolveCloud(profile, true);
         final JCloudsSlaveTemplate tpl = CliHelper.resolveTemplate(c, tmpl);
         stdout.println(CliHelper.XML_HEADER);

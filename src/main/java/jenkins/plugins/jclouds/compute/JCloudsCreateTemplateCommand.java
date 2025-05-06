@@ -30,7 +30,7 @@ import org.kohsuke.args4j.Option;
 /**
  * Creates a new JCloudsCloud by reading stdin as a configuration XML file.
  *
- * @author Kohsuke Kawaguchi
+ * @author Fritz Elfert
  */
 @Extension
 public class JCloudsCreateTemplateCommand extends CLICommand {

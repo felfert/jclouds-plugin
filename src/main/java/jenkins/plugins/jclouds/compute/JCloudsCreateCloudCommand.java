@@ -33,8 +33,8 @@ import jenkins.plugins.jclouds.internal.CredentialsHelper;
 /**
  * Creates a new JCloudsCloud by reading stdin as a configuration XML file.
  *
- * @author Kohsuke Kawaguchi
- */
+ * @author Fritz Elfert
+*/
 @Extension
 public class JCloudsCreateCloudCommand extends CLICommand {
     @Override

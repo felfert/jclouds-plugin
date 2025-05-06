@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jenkins.plugins.jclouds.compute;
+package jenkins.plugins.jclouds.cli;
 
 import hudson.Extension;
 import hudson.cli.CLICommand;
@@ -25,6 +25,9 @@ import jenkins.model.Jenkins;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+
+import jenkins.plugins.jclouds.compute.JCloudsComputer;
+import jenkins.plugins.jclouds.compute.JCloudsSlave;
 
 /**
  * Expires a running slave.

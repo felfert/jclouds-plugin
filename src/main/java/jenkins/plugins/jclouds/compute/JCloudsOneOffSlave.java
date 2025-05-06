@@ -35,6 +35,8 @@ import java.util.logging.Logger;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import jenkins.plugins.jclouds.cli.Messages;
+
 public class JCloudsOneOffSlave extends SimpleBuildWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jenkins.plugins.jclouds.compute;
+package jenkins.plugins.jclouds.cli;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -29,6 +29,10 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
 
 import org.jclouds.compute.domain.NodeMetadata;
+
+import jenkins.plugins.jclouds.compute.JCloudsCloud;
+import jenkins.plugins.jclouds.compute.JCloudsSlave;
+import jenkins.plugins.jclouds.compute.JCloudsSlaveTemplate;
 
 /**
  * Provisions a slave.

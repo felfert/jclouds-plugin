@@ -101,6 +101,7 @@ import hudson.security.ACL;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import hudson.security.AccessControlled;
 
+import jenkins.plugins.jclouds.cli.CliMessages;
 import jenkins.plugins.jclouds.compute.internal.RunningNode;
 import jenkins.plugins.jclouds.internal.CredentialsHelper;
 import jenkins.plugins.jclouds.internal.SSHPublicKeyExtractor;
@@ -275,13 +276,13 @@ public class JCloudsCloud extends Cloud {
 
     protected Object readResolve() {
         for (JCloudsSlaveTemplate template : templates) {
-            template.cloud = this;
+            template.setCloud(this);
         }
         return this;
     }
 
     public void addTemplate(JCloudsSlaveTemplate tpl) {
-        tpl.cloud = this;
+        tpl.setCloud(this);
         templates.add(tpl);
     }
 
@@ -472,7 +473,7 @@ public class JCloudsCloud extends Cloud {
         return getTemplate(state.getLabel()) != null;
     }
 
-    JCloudsSlaveTemplate getTemplate(String name) {
+    public JCloudsSlaveTemplate getTemplate(String name) {
         for (JCloudsSlaveTemplate t : templates)
             if (t.name.equals(name))
                 return t;
@@ -496,7 +497,7 @@ public class JCloudsCloud extends Cloud {
      *
      * @param t The template to be used.
      */
-    JCloudsSlave doProvisionFromTemplate(final JCloudsSlaveTemplate t) throws IOException {
+    public JCloudsSlave doProvisionFromTemplate(final JCloudsSlaveTemplate t) throws IOException {
         final StringWriter sw = new StringWriter();
         final StreamTaskListener listener = new StreamTaskListener(sw);
         final ProvisioningActivity.Id provisioningId = new ProvisioningActivity.Id(this.name, t.name);
@@ -546,7 +547,7 @@ public class JCloudsCloud extends Cloud {
      * Determine how many nodes are currently running for this cloud.
      * @return number of running nodes.
      */
-    int getRunningNodesCount() {
+    public int getRunningNodesCount() {
         int nodeCount = 0;
 
         for (ComputeMetadata cm : getCompute().listNodes()) {

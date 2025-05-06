@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jenkins.plugins.jclouds.compute;
+package jenkins.plugins.jclouds.cli;
 
 import com.thoughtworks.xstream.XStreamException;
 
@@ -26,6 +26,9 @@ import jenkins.model.Jenkins;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
+
+import jenkins.plugins.jclouds.compute.JCloudsCloud;
+import jenkins.plugins.jclouds.compute.JCloudsSlaveTemplate;
 
 /**
  * Creates a new JCloudsCloud by reading stdin as a configuration XML file.

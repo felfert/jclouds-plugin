@@ -186,7 +186,7 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
     private final boolean useJnlp;
     private final boolean jnlpProvision;
 
-    transient JCloudsCloud cloud;
+    private transient JCloudsCloud cloud;
     private transient Set<LabelAtom> labelSet;
 
     public String getCredentialsId() {
@@ -276,6 +276,10 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
 
     public JCloudsCloud getCloud() {
         return cloud;
+    }
+
+    public void setCloud(JCloudsCloud c) {
+        cloud = c;
     }
 
     /**
@@ -376,7 +380,7 @@ public class JCloudsSlaveTemplate extends AbstractDescribableImpl<JCloudsSlaveTe
         }
     }
 
-    protected  List<String> getUserDataIds() {
+    public List<String> getUserDataIds() {
         List<String> ret = new ArrayList<>();
         if (null != userDataEntries) {
             for (UserData ud : userDataEntries) {

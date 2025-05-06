@@ -40,6 +40,8 @@ import org.jclouds.compute.domain.NodeMetadata;
 
 import com.google.common.collect.ImmutableSet;
 
+import jenkins.plugins.jclouds.cli.Messages;
+
 /**
  * JClouds version of Jenkins {@link SlaveComputer} - responsible for terminating an instance.
  *

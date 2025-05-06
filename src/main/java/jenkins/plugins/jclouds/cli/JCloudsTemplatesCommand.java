@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jenkins.plugins.jclouds.compute;
+package jenkins.plugins.jclouds.cli;
 
 import java.io.IOException;
 
@@ -21,8 +21,11 @@ import hudson.Extension;
 import hudson.cli.CLICommand;
 import hudson.security.Permission;
 
+import jenkins.plugins.jclouds.compute.JCloudsCloud;
+import jenkins.plugins.jclouds.compute.JCloudsSlaveTemplate;
+
 /**
- * Provisions a slave.
+ * Provisions an agent.
  *
  * @author Fritz Elfert
  */

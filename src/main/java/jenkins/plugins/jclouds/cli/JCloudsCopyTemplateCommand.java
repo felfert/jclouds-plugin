@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jenkins.plugins.jclouds.compute;
+package jenkins.plugins.jclouds.cli;
 
 import com.thoughtworks.xstream.XStreamException;
 
@@ -23,6 +23,9 @@ import hudson.cli.CLICommand;
 import jenkins.model.Jenkins;
 
 import org.kohsuke.args4j.Argument;
+
+import jenkins.plugins.jclouds.compute.JCloudsCloud;
+import jenkins.plugins.jclouds.compute.JCloudsSlaveTemplate;
 
 /**
  * Copies an existing JClouds template, to the same cloud with a different name.

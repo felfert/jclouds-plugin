@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jenkins.plugins.jclouds.compute;
+package jenkins.plugins.jclouds.cli;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -27,7 +27,10 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
 
+import jenkins.plugins.jclouds.compute.JCloudsCloud;
+import jenkins.plugins.jclouds.compute.JCloudsSlaveTemplate;
 import jenkins.plugins.jclouds.internal.CredentialsHelper;
+
 /**
  * Exports an existing jclouds cloud to xml on stdout
  *

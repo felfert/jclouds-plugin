@@ -25,6 +25,8 @@ import java.util.logging.Logger;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import jenkins.plugins.jclouds.cli.Messages;
+
 /**
  * @author Vijay Kiran
  */

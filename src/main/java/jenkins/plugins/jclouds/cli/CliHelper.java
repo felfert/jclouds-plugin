@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jenkins.plugins.jclouds.compute;
+package jenkins.plugins.jclouds.cli;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -32,6 +32,8 @@ import jenkins.model.Jenkins;
 
 import org.kohsuke.args4j.CmdLineException;
 
+import jenkins.plugins.jclouds.compute.JCloudsCloud;
+import jenkins.plugins.jclouds.compute.JCloudsSlaveTemplate;
 import jenkins.plugins.jclouds.config.ConfigHelper;
 import jenkins.plugins.jclouds.internal.CredentialsHelper;
 

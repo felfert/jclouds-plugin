@@ -61,6 +61,10 @@ public class ConfigExport {
         }
     }
 
+    public String getEncryptedConfigData() {
+        return encryptedConfigData;
+    }
+
     /**
      * Exports all out userData.
      *

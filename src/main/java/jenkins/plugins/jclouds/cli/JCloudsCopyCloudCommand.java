@@ -25,48 +25,41 @@ import jenkins.model.Jenkins;
 import org.kohsuke.args4j.Argument;
 
 import jenkins.plugins.jclouds.compute.JCloudsCloud;
-import jenkins.plugins.jclouds.compute.JCloudsSlaveTemplate;
 
 /**
- * Copies an existing JClouds template, to the same cloud with a different name.
+ * Copies an existing JClouds cloud, to a different name.
  *
  * @author Fritz Elfert
  */
 @Extension
-public class JCloudsCopyTemplateCommand extends CLICommand {
+public class JCloudsCopyCloudCommand extends CLICommand {
     @Override
     public String getShortDescription() {
-        return Messages.CopyTemplateCommand_shortDescription();
+        return Messages.CopyCloudCommand_shortDescription();
     }
 
-    @Argument(metaVar = "FROM-TEMPLATE", index = 0, usage = "Name of the existing template to copy", required = true)
+    @Argument(metaVar = "FROM-CLOUD", index = 0, usage = "Name of the existing jclouds cloud to copy", required = true)
     public String from;
 
-    @Argument(metaVar = "TO-TEMPLATE", index = 1, usage = "Name of the new template to create", required = true)
+    @Argument(metaVar = "TO-CLOUD", index = 1, usage = "Name of the new jclouds cloud to create", required = true)
     public String to;
-
-    @Argument(required = false, metaVar = "PROFILE", index = 2, usage = "Name of jclouds profile. Required, if FROM-TEMPLATE is ambiguous")
-    public String profile = null;
-
 
     @Override
     protected int run() throws Exception {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
-        JCloudsCloud c = CliHelper.resolveCloud(profile, true);
+        final JCloudsCloud cFrom = CliHelper.resolveCloud(from, false);
         if (from.equals(to)) {
-            throw new IllegalStateException("Cannot copy template to itself");
+            throw new IllegalStateException("Cannot copy cloud to itself");
         }
-        final JCloudsSlaveTemplate tplFrom = CliHelper.resolveTemplate(c, from);
-        c = tplFrom.getCloud();
-        if (null != c.getTemplate(to)) {
-            throw new IllegalStateException("Template '" + to + "' already exists");
+        if (null != Jenkins.get().clouds.getByName(to)) {
+            throw new IllegalStateException("Cloud '" + to + "' already exists");
         }
-        String xml = Jenkins.XSTREAM.toXML(tplFrom);
+        String xml = Jenkins.XSTREAM.toXML(cFrom);
         // Not great, but template name is final
         xml = xml.replaceFirst("<name>.*</name>", "<name>" + to + "</name>");
         try {
-            JCloudsSlaveTemplate tplTo = (JCloudsSlaveTemplate)Jenkins.XSTREAM.fromXML(xml);
-            c.addTemplate(tplTo);
+            JCloudsCloud cTo = (JCloudsCloud)Jenkins.XSTREAM.fromXML(xml);
+            Jenkins.get().clouds.add(cTo);
         } catch (XStreamException e) {
             throw new IllegalStateException("Unable to copy " + e.toString());
         }

@@ -30,7 +30,7 @@ import jenkins.plugins.jclouds.compute.JCloudsComputer;
 import jenkins.plugins.jclouds.compute.JCloudsSlave;
 
 /**
- * Expires a running slave.
+ * Expires a running JClouds node.
  *
  * @author Fritz Elfert
  */

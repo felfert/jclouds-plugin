@@ -226,6 +226,8 @@ public class ConfigHelper {
             DataSource ds = new ConfigDataSource(cfg, false, Map.of());
             String content = null == cfg.content ? "" : cfg.content;
             md.update(ds.getContentType().getBytes(StandardCharsets.UTF_8));
+            md.update(cfg.name.getBytes(StandardCharsets.UTF_8));
+            md.update(cfg.comment.getBytes(StandardCharsets.UTF_8));
             String hash = hex.formatHex(md.digest(content.getBytes(StandardCharsets.UTF_8)));
             ret.put(cfg.id, hash);
         }

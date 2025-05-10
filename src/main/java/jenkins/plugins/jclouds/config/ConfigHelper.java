@@ -215,10 +215,14 @@ public class ConfigHelper {
     }
 
     public static Map<String, String> getUserDataHashes(List<String> configIds) throws NoSuchAlgorithmException {
+        return getUserDataHashesFromConfigs(getConfigs(configIds));
+    }
+
+    public static Map<String, String> getUserDataHashesFromConfigs(List<Config> cfgs) throws NoSuchAlgorithmException {
         HexFormat hex = HexFormat.of();
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         Map<String, String> ret = new HashMap<>();
-        for (Config cfg : getConfigs(configIds)) {
+        for (Config cfg : cfgs) {
             DataSource ds = new ConfigDataSource(cfg, false, Map.of());
             String content = null == cfg.content ? "" : cfg.content;
             md.update(ds.getContentType().getBytes(StandardCharsets.UTF_8));
@@ -228,7 +232,7 @@ public class ConfigHelper {
         return ret;
     }
 
-    public static String exportXml() {
+    public static List<Config> getJCloudsConfigs() {
         List<Config> cfgs = new ArrayList<>();
         for (ConfigProvider p : ConfigProvider.all()) {
             ConfigSuitableFor a = p.getClass().getAnnotation(ConfigSuitableFor.class);
@@ -238,6 +242,10 @@ public class ConfigHelper {
                 }
             }
         }
-        return Jenkins.XSTREAM.toXML(cfgs);
+        return cfgs;
+    }
+
+    public static String exportXml() {
+        return Jenkins.XSTREAM.toXML(getJCloudsConfigs());
     }
 }

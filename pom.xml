@@ -168,6 +168,7 @@ limitations under the License.
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ssh-slaves</artifactId>
+      <version>3.999999-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>

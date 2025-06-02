@@ -55,7 +55,7 @@ limitations under the License.
     <test.jenkins.blobstore.identity>FIXME_IDENTITY</test.jenkins.blobstore.identity>
     <test.jenkins.blobstore.credential>FIXME_CREDENTIALS</test.jenkins.blobstore.credential>
 
-    <jclouds.version>2.5.0</jclouds.version>
+    <jclouds.version>2.7.1-SNAPSHOT</jclouds.version>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.492</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
@@ -180,7 +180,7 @@ limitations under the License.
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.8.9</version>
+      <version>2.11.0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -191,105 +191,24 @@ limitations under the License.
       <artifactId>jakarta-mail-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.jclouds</groupId>
-      <artifactId>jclouds-core</artifactId>
+      <groupId>com.github.felfert</groupId>
+      <artifactId>jclouds-shaded</artifactId>
       <version>${jclouds.version}</version>
       <exclusions>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>com.google.inject</groupId>
           <artifactId>guice</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.annotation</groupId>
-          <artifactId>javax.annotation-api</artifactId>
+          <groupId>com.google.inject.extensions</groupId>
+          <artifactId>guice-assistedinject</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.jclouds</groupId>
-      <artifactId>jclouds-allcompute</artifactId>
-      <version>${jclouds.version}</version>
-      <exclusions>
-        <!-- exclude broken digitalocean2 ... -->
-        <exclusion>
-          <groupId>org.apache.jclouds.provider</groupId>
-          <artifactId>digitalocean2</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!-- ... and use our backported fix instead -->
-    <dependency>
-      <groupId>com.github.felfert</groupId>
-      <artifactId>digitalocean2-fixed</artifactId>
-      <version>2.5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jclouds</groupId>
-      <artifactId>jclouds-allblobstore</artifactId>
-      <version>${jclouds.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jclouds.driver</groupId>
-      <artifactId>jclouds-enterprise</artifactId>
-      <version>${jclouds.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcprov-ext-jdk15on</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jclouds.driver</groupId>
-      <artifactId>jclouds-sshj</artifactId>
-      <version>${jclouds.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcpkix-jdk15on</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jclouds</groupId>
-      <artifactId>jclouds-scriptbuilder</artifactId>
-      <version>${jclouds.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jclouds.driver</groupId>
-      <artifactId>jclouds-jsch</artifactId>
-      <version>${jclouds.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jclouds</groupId>
-      <artifactId>jclouds-core</artifactId>
-      <version>${jclouds.version}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.annotation</groupId>
-          <artifactId>javax.annotation-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jclouds</groupId>
-      <artifactId>jclouds-compute</artifactId>
-      <version>${jclouds.version}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jclouds</groupId>
-      <artifactId>jclouds-blobstore</artifactId>
-      <version>${jclouds.version}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-assistedinject</artifactId>
+      <version>6.0.0</version>
     </dependency>
 
   </dependencies>
@@ -308,6 +227,7 @@ limitations under the License.
                 <requireUpperBoundDeps>
                   <excludes combine.children="append">
                     <exclude>com.google.code.gson:gson</exclude>
+                    <exclude>com.google.errorprone:error_prone_annotations</exclude>
                   </excludes>
                 </requireUpperBoundDeps>
               </rules>

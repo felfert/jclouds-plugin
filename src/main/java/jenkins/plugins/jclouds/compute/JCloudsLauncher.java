@@ -21,6 +21,7 @@ import hudson.model.TaskListener;
 import hudson.plugins.sshslaves.SSHLauncher;
 import hudson.slaves.ComputerLauncher;
 import hudson.slaves.SlaveComputer;
+import io.jenkins.plugins.sshbuildagents.ssh.mina.SSHApacheMinaLauncher;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -39,8 +40,10 @@ import org.jclouds.compute.domain.NodeMetadata;
 public class JCloudsLauncher extends ComputerLauncher {
 
     private static final Logger LOGGER = Logger.getLogger(JCloudsLauncher.class.getName());
+    private static final String MINA_PROPERTY = JCloudsLauncher.class.getName() + ".useMina";
 
     private static void invokeSSHLauncher(
+            boolean mina,
             final String address,
             final String credentialsId,
             final String jvmOptions,
@@ -48,8 +51,15 @@ public class JCloudsLauncher extends ComputerLauncher {
             TaskListener listener)
             throws IOException {
         try {
-            SSHLauncher launcher = new SSHLauncher(address, 22, credentialsId);
-            launcher.setJvmOptions(jvmOptions);
+            ComputerLauncher launcher = mina
+                    ? new SSHApacheMinaLauncher(address, 22, credentialsId)
+                    : new SSHLauncher(address, 22, credentialsId);
+            if (launcher instanceof SSHLauncher) {
+                ((SSHLauncher) launcher).setJvmOptions(jvmOptions);
+            } else {
+                ((SSHApacheMinaLauncher) launcher).setJvmOptions(jvmOptions);
+            }
+
             launcher.launch(agent, listener);
         } catch (Throwable t) {
             LOGGER.log(java.util.logging.Level.SEVERE, t.getMessage(), t);
@@ -69,6 +79,7 @@ public class JCloudsLauncher extends ComputerLauncher {
     public void launch(SlaveComputer computer, TaskListener listener) throws IOException, InterruptedException {
 
         PrintStream logger = listener.getLogger();
+        LOGGER.info("Set " + MINA_PROPERTY + " to true, to enable new Apache Mina based launcher");
 
         final JCloudsSlave slave = (JCloudsSlave) computer.getNode();
         if (null != slave) {
@@ -81,7 +92,8 @@ public class JCloudsLauncher extends ComputerLauncher {
                 logger.println("Invalid address 0.0.0.0, your host is most likely waiting for an ip address.");
                 throw new IOException("goto sleep");
             }
-            invokeSSHLauncher(address, slave.getCredentialsId(), slave.getJvmOptions(), computer, listener);
+            boolean mina = Boolean.getBoolean(MINA_PROPERTY);
+            invokeSSHLauncher(mina, address, slave.getCredentialsId(), slave.getJvmOptions(), computer, listener);
 
         } else {
             LOGGER.severe("Could not launch NULL agent.");
